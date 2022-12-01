@@ -35,6 +35,7 @@
   <li><a href="#BalloonEditor">BalloonEditor</a></li>
   <li><a href="#DecoupledEditor">DecoupledEditor</a></li>
   <li><a href="#InlineEditor">InlineEditor</a></li>
+  <li><a href="#MediaLibrary">MediaLibrary</a></li>
 </ol>
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -78,8 +79,41 @@ const FullEditor = (props: IEditorProps) => {
   const editorRef = useRef<any>(null);
   const initialRender = useRef<string[]>([]);
 
+  // Update value editor
   // const saveValue = (newContent: string) => {
   //   if (props.onChange) props.onChange(newContent);
+  // };
+
+  // Insert Image Media Library
+  // const selectImage = (data) => {
+  //   let srcset = '';
+  //   if (data.urlSmall) srcset += data.urlSmall + ' 300w,';
+  //   if (data.urlMedium) srcset += data.urlMedium + ' 600w,';
+  //   if (data.urlLarge) srcset += data.urlLarge + ' 900w,';
+  //   if (data.url) srcset += data.url + ' 1200w';
+  //   srcset = srcset.replace(/,\s*$/, '');
+
+  //   if (data && data.url) {
+  //     mediaLibraryChooseImage({
+  //       imageFallbackUrl: data.url,
+  //       imageSources: [
+  //         {
+  //           sizes:
+  //             '(max-width: 300px) 300px, (max-width: 600px) 600px, (max-width: 900px) 900px, (max-width: 1200px) 1200px',
+  //           srcset,
+  //           type:
+  //             data.ext === 'png'
+  //               ? 'image/png'
+  //               : data.ext === 'jpg'
+  //               ? 'image/jpeg'
+  //               : 'image/jpeg',
+  //         },
+  //       ],
+  //       imageTextAlternative: data.alt ? data.alt : '',
+  //     });
+  //   } else {
+  //     mediaLibraryOnClose();
+  //   }
   // };
 
   useEffect(() => {
@@ -125,6 +159,14 @@ const FullEditor = (props: IEditorProps) => {
         //     saveValue(editor.getData());
         //   },
         //   waitingTime: 100,
+        // },
+        // mediaLibrary: {
+        //   onOpen: () => {
+        //     console.log('open');
+        //   },
+        //   onError: function (error) {
+        //     console.log('onError', error.message);
+        //   },
         // },
         placeholder: props.placeholder || "",
         id: props.id || "",
@@ -277,6 +319,80 @@ InlineEditor.create(document.querySelector('#editor'), {
     'undo',
     'redo',
   ],
+})
+  .then((editor) => {
+    window.InlineEditor = editor;
+  })
+  .catch((error) => {
+    console.error('There was a problem initializing the editor.', error);
+  });
+```
+
+## MediaLibrary
+
+```js
+import {
+  InlineEditor,
+  mediaLibraryChooseImage,
+  mediaLibraryOnClose,
+} from '@sevendev/editor';
+
+const selectImage = (data) => {
+  let srcset = '';
+  if (data.urlSmall) srcset += data.urlSmall + ' 300w,';
+  if (data.urlMedium) srcset += data.urlMedium + ' 600w,';
+  if (data.urlLarge) srcset += data.urlLarge + ' 900w,';
+  if (data.url) srcset += data.url + ' 1200w';
+  srcset = srcset.replace(/,\s*$/, '');
+
+  if (data && data.url) {
+    mediaLibraryChooseImage({
+      imageFallbackUrl: data.url,
+      imageSources: [
+        {
+          sizes:
+            '(max-width: 300px) 300px, (max-width: 600px) 600px, (max-width: 900px) 900px, (max-width: 1200px) 1200px',
+          srcset,
+          type:
+            data.ext === 'png'
+              ? 'image/png'
+              : data.ext === 'jpg'
+              ? 'image/jpeg'
+              : 'image/jpeg',
+        },
+      ],
+      imageTextAlternative: data.alt ? data.alt : '',
+    });
+  } else {
+    mediaLibraryOnClose();
+  }
+};
+
+InlineEditor.create(document.querySelector('#editor'), {
+  toolbar: [
+    'heading',
+    '|',
+    'mediaLibrary',
+    '|',
+    'bold',
+    'italic',
+    'link',
+    'bulletedList',
+    'numberedList',
+    'blockQuote',
+    'insertTable',
+    'redo',
+    'mediaEmbed',
+    'undo',
+  ],
+  mediaLibrary: {
+    onOpen: () => {
+      console.log('open');
+    },
+    onError: function (error) {
+      console.log('onError', error.message);
+    },
+  },
 })
   .then((editor) => {
     window.InlineEditor = editor;

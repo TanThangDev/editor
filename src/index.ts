@@ -1,22 +1,67 @@
 import Editor from './build/editor.js';
+import {
+  IMediaLibraryConfig,
+  IMediaLibraryImage,
+  mediaLibraryOnClose,
+  mediaLibraryChooseImage,
+} from './mediaLibrary';
 
 interface Editor {
   create: (el: HTMLElement, options: EditorOptions) => Promise<EditorInstance>;
 }
 
+type Toolbar =
+  | '|'
+  | 'heading'
+  | 'bold'
+  | 'italic'
+  | 'underline'
+  | 'strikethrough'
+  | 'code'
+  | 'subscript'
+  | 'superscript'
+  | 'removeFormat'
+  | 'undo'
+  | 'redo'
+  | 'specialCharacters'
+  | 'horizontalLine'
+  | 'pageBreak'
+  | '|'
+  | 'highlight'
+  | 'fontSize'
+  | 'fontColor'
+  | 'fontBackgroundColor'
+  | 'fontFamily'
+  | 'link'
+  | 'blockQuote'
+  | 'insertTable'
+  | 'uploadImage'
+  | 'insertImage'
+  | 'mediaEmbed'
+  | 'codeBlock'
+  | 'htmlEmbed'
+  | 'bulletedList'
+  | 'numberedList'
+  | 'outdent'
+  | 'indent'
+  | 'alignment'
+  | 'exportPdf'
+  | 'exportWord'
+  | 'importWord'
+  | 'findAndReplace'
+  | 'selectAll'
+  | 'sourceEditing'
+  | 'mediaLibrary';
+
+interface IToolbar {
+  items?: Toolbar[];
+  shouldNotGroupWhenFull?: boolean;
+}
+
+// array of toolbar items
 interface EditorOptions {
-  toolbar?:
-    | string[]
-    | {
-        items?: string[];
-        shouldNotGroupWhenFull?: boolean;
-      };
-  blockToolbar?:
-    | string[]
-    | {
-        items?: string[];
-        shouldNotGroupWhenFull?: boolean;
-      };
+  toolbar?: IToolbar | Toolbar[];
+  blockToolbar?: IToolbar | Toolbar[];
   extraPlugins?: any[];
   autosave?: {
     save?(editor: EditorInstance): Promise<void>;
@@ -173,14 +218,8 @@ interface EditorOptions {
     showPreviews?: boolean;
     sanitizeHtml?: (html: string) => string;
   };
-  ckfinder?: {
-    uploadUrl?: string;
-    options?: {
-      resourceType?: string;
-    };
-    openerMethod?: 'popup' | 'dialog' | 'modal';
-  };
   removePlugins?: string[];
+  mediaLibrary?: IMediaLibraryConfig;
 }
 
 interface LinkDecorator {
@@ -208,6 +247,8 @@ interface SevenDevEditor {
   BalloonEditor: Editor;
   DecoupledEditor: Editor;
   InlineEditor: Editor;
+  mediaLibraryChooseImage: (image: IMediaLibraryImage) => void;
+  mediaLibraryOnClose: () => void;
 }
 
 const ClassicEditor: Editor = Editor.ClassicEditor;
@@ -224,4 +265,7 @@ export {
   BalloonEditor,
   DecoupledEditor,
   InlineEditor,
+  mediaLibraryOnClose,
+  mediaLibraryChooseImage,
+  IMediaLibraryImage,
 };
