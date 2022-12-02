@@ -1,3 +1,11 @@
+## v1.0.2
+
+### Added or Changed
+
+- Add Plugin Link Image
+
+### Removed
+
 ## v1.0.1
 
 ### Added or Changed
